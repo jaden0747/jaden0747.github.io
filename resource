@@ -1,1 +1,0 @@
-/home/jaden/Workspace/udemy/complete-javascript-course/
