@@ -20,8 +20,19 @@ activePlayer = 1;
 
 function rollDice() {
      dice = Math.floor(Math.random() * 6) + 1;
-     document.querySelector("#score-" + activePlayer).textContent = dice;
      setImage(".dice", dice);
+     document.querySelector("#score-" + activePlayer).textContent = dice;
+     if (dice != 1) roundScore += dice;
+     else {
+          roundScore = 0;
+          updateScore();
+     }
+}
+
+function updateScore() {
+     scores[activePlayer] += roundScore;
+     document.querySelector("#current-" + activePlayer).textContent = scores[activePlayer];
+     activePlayer = 1 - activePlayer;
 }
 
 function setImage(att, val) {
@@ -32,3 +43,4 @@ function setImage(att, val) {
 /* --------------------------------- script --------------------------------- */
 document.querySelector(".dice").style.display = "none";
 document.querySelector(".btn-roll").addEventListener("click", rollDice);
+document.querySelector(".btn-hold").addEventListener("click", updateScore);
