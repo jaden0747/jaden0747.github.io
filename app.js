@@ -18,29 +18,37 @@ roundScore = 0;
 activePlayer = 0;
 end = false;
 
-/* -------------------------------- function -------------------------------- */
+/* --------------------------------- script --------------------------------- */
+document.querySelector(".dice").style.display = "none";
 
-function rollDice() {
+document.querySelector(".btn-roll").addEventListener("click", function() {
      if (!end) {
           dice = Math.floor(Math.random() * 6) + 1;
-          setImage(".dice", dice);
-          if (dice != 1) roundScore += dice;
-          else {
+          document.querySelector(".dice").style.display = "block";
+          document.querySelector(".dice").src = "asset/dice-" + dice + ".png";
+          if (dice != 1) {
+               roundScore += dice;
+               document.querySelector("#score-" + activePlayer).textContent = roundScore;
+          } else {
                roundScore = 0;
                document.querySelector("#score-" + activePlayer).textContent = roundScore;
-               updateScore();
+               document.querySelector("#current-" + activePlayer).textContent = scores[activePlayer];
+               document.querySelector("#score-" + activePlayer).textContent = 0;
+               document.querySelector(".player-" + activePlayer + "-panel").classList.remove("active");
+               activePlayer = 1 - activePlayer;
+               document.querySelector(".player-" + activePlayer + "-panel").classList.add("active");
           }
-          document.querySelector("#score-" + activePlayer).textContent = roundScore;
      }
-}
+});
 
-function updateScore() {
+document.querySelector(".btn-hold").addEventListener("click", function() {
      if (!end) {
           scores[activePlayer] += roundScore;
           roundScore = 0;
-          if (scores[activePlayer] > 100) {
-               scores[activePlayer] = 100;
+          if (scores[activePlayer] > 30) {
+               scores[activePlayer] = 30;
                end = true;
+               alert("player " + activePlayer + " win!");
           }
           document.querySelector("#current-" + activePlayer).textContent = scores[activePlayer];
           document.querySelector("#score-" + activePlayer).textContent = 0;
@@ -48,10 +56,12 @@ function updateScore() {
           activePlayer = 1 - activePlayer;
           document.querySelector(".player-" + activePlayer + "-panel").classList.add("active");
      }
-}
+});
 
-function reset() {
-     if (document.querySelector("#score-" + activePlayer).textContent >= 100) activePlayer = 1 - activePlayer;
+document.querySelector(".btn-new").addEventListener("click", function() {
+     if (document.querySelector("#score-" + activePlayer).textContent >= 100) {
+          activePlayer = 1 - activePlayer;
+     }
      //reset statistic
      document.querySelector("#current-0").textContent = 0;
      document.querySelector("#score-0").textContent = 0;
@@ -59,15 +69,4 @@ function reset() {
      document.querySelector("#score-1").textContent = 0;
      document.querySelector(".dice").style.display = "none";
      end = false;
-}
-
-function setImage(att, val) {
-     document.querySelector(att).style.display = "block";
-     document.querySelector(att).src = "asset/dice-" + val + ".png";
-}
-
-/* --------------------------------- script --------------------------------- */
-document.querySelector(".dice").style.display = "none";
-document.querySelector(".btn-roll").addEventListener("click", rollDice);
-document.querySelector(".btn-hold").addEventListener("click", updateScore);
-document.querySelector(".btn-new").addEventListener("click", reset);
+});
