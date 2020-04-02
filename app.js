@@ -45,8 +45,11 @@ document.querySelector(".btn-hold").addEventListener("click", function() {
      if (!end) {
           scores[activePlayer] += roundScore;
           roundScore = 0;
-          if (scores[activePlayer] > 30) {
-               scores[activePlayer] = 30;
+
+          var input = document.querySelector(".final-score").nodeValue;
+          console.log(input);
+          if (scores[activePlayer] > input) {
+               scores[activePlayer] = input;
                end = true;
                alert("player " + activePlayer + " win!");
           }
