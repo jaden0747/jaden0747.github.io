@@ -34,9 +34,12 @@ document.querySelector(".btn-roll").addEventListener("click", function () {
      // 1. generate a random number
      var dice = Math.floor(Math.random() * 6) + 1;
      var current = document.querySelector("#current-" + activePlayer);
+     var image = document.querySelector(".dice");
+
      // 2. display result image
      current.textContent = dice + 1;
-
+     image.display = "block";
+     image.src = "/asset/dice-" + dice + ".png";
      // 3. update round score if the number != 1
      if (dice !== 1) {
           roundScore += dice;
