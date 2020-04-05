@@ -10,66 +10,14 @@ it's the next player's turn
 
 */
 
-/* -------------------------------- variable -------------------------------- */
-var scores, roundScore, activePlayer, dice, end;
+var scores, roundScore, activePlayer, dice;
 
 scores = [0, 0];
 roundScore = 0;
 activePlayer = 0;
-end = false;
 
-/* --------------------------------- script --------------------------------- */
+dice = Math.floor(Math.random() * 6) + 1;
+console.log(dice);
+
+document.querySelector("#current-" + activePlayer).textContent = dice + 1;
 document.querySelector(".dice").style.display = "none";
-
-document.querySelector(".btn-roll").addEventListener("click", function() {
-     if (!end) {
-          dice = Math.floor(Math.random() * 6) + 1;
-          document.querySelector(".dice").style.display = "block";
-          document.querySelector(".dice").src = "asset/dice-" + dice + ".png";
-          if (dice != 1) {
-               roundScore += dice;
-               document.querySelector("#score-" + activePlayer).textContent = roundScore;
-          } else {
-               roundScore = 0;
-               document.querySelector("#score-" + activePlayer).textContent = roundScore;
-               document.querySelector("#current-" + activePlayer).textContent = scores[activePlayer];
-               document.querySelector("#score-" + activePlayer).textContent = 0;
-               document.querySelector(".player-" + activePlayer + "-panel").classList.remove("active");
-               activePlayer = 1 - activePlayer;
-               document.querySelector(".player-" + activePlayer + "-panel").classList.add("active");
-          }
-     }
-});
-
-document.querySelector(".btn-hold").addEventListener("click", function() {
-     if (!end) {
-          scores[activePlayer] += roundScore;
-          roundScore = 0;
-
-          var input = document.querySelector(".final-score").nodeValue;
-          console.log(input);
-          if (scores[activePlayer] > input) {
-               scores[activePlayer] = input;
-               end = true;
-               alert("player " + activePlayer + " win!");
-          }
-          document.querySelector("#current-" + activePlayer).textContent = scores[activePlayer];
-          document.querySelector("#score-" + activePlayer).textContent = 0;
-          document.querySelector(".player-" + activePlayer + "-panel").classList.remove("active");
-          activePlayer = 1 - activePlayer;
-          document.querySelector(".player-" + activePlayer + "-panel").classList.add("active");
-     }
-});
-
-document.querySelector(".btn-new").addEventListener("click", function() {
-     if (document.querySelector("#score-" + activePlayer).textContent >= 100) {
-          activePlayer = 1 - activePlayer;
-     }
-     //reset statistic
-     document.querySelector("#current-0").textContent = 0;
-     document.querySelector("#score-0").textContent = 0;
-     document.querySelector("#current-1").textContent = 0;
-     document.querySelector("#score-1").textContent = 0;
-     document.querySelector(".dice").style.display = "none";
-     end = false;
-});
