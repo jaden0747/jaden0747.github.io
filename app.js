@@ -17,10 +17,7 @@ it's the next player's turn
 // ─── INITIALIZE ─────────────────────────────────────────────────────────────────
 //
 
-var scores, roundScore, activePlayer;
-scores = [0, 0];
-roundScore = 0;
-activePlayer = 0;
+var scores, roundScore, activePlayer, gameEnd, endCondition;
 initNewGame();
 
 //
@@ -32,14 +29,16 @@ initNewGame();
 //
 
 function changeActivePlayer() {
-     document.querySelector(".player-" + activePlayer + "-panel").classList.remove("active");
-     activePlayer = 1 - activePlayer;
-     document.querySelector(".player-" + activePlayer + "-panel").classList.add("active");
+     activePlayer === 0 ? (activePlayer = 1) : (activePlayer = 0);
+     document.querySelector(".player-0-panel").classList.toggle("active");
+     document.querySelector(".player-1-panel").classList.toggle("active");
+     document.querySelector(".dice").style.display = "none";
 }
 
 function updateScore() {
      // 1. update score
-     document.querySelector("#score-" + activePlayer).textContent = scores[activePlayer] + roundScore;
+     scores[activePlayer] = scores[activePlayer] + roundScore;
+     document.querySelector("#score-" + activePlayer).textContent = scores[activePlayer];
 
      // 2. reset player's current score
      roundScore = 0;
@@ -47,11 +46,28 @@ function updateScore() {
 }
 
 function initNewGame() {
+     // reset global variables
+     scores = [0, 0];
+     roundScore = 0;
+     activePlayer = 0;
+     gameEnd = false;
+     endCondition = 10;
+
+     // reset dice
      document.querySelector(".dice").style.display = "none";
+
+     // reset UI
      document.getElementById("score-0").textContent = "0";
      document.getElementById("score-1").textContent = "0";
      document.getElementById("current-0").textContent = "0";
      document.getElementById("current-1").textContent = "0";
+     document.querySelector("#name-0").textContent = "Player 1";
+     document.querySelector("#name-1").textContent = "Player 2";
+     document.querySelector(".player-0-panel").classList.remove("active");
+     document.querySelector(".player-1-panel").classList.remove("active");
+     document.querySelector(".player-0-panel").classList.remove("winner");
+     document.querySelector(".player-1-panel").classList.remove("winner");
+     document.querySelector(".player-0-panel").classList.add("active");
 }
 //
 // ───────────────────────────────────────────────────────────── END FUNCTION ─────
@@ -62,10 +78,14 @@ function initNewGame() {
 //
 
 document.querySelector(".btn-roll").addEventListener("click", function() {
+     // 0. if game is ended, return
+     if (gameEnd) return;
+
      // 1. generate a random number
-     var dice = Math.floor(Math.random() * 6) + 1;
-     var current = document.querySelector("#current-" + activePlayer);
-     var diceDOM = document.querySelector(".dice");
+     var dice, current, diceDOM;
+     dice = Math.floor(Math.random() * 6) + 1;
+     current = document.querySelector("#current-" + activePlayer);
+     diceDOM = document.querySelector(".dice");
 
      // 2. display result image
      current.textContent = dice + 1;
@@ -82,7 +102,7 @@ document.querySelector(".btn-roll").addEventListener("click", function() {
      // 4. if the number == 1, discard all the score earned and switch player's turn
      else {
           // update player's score
-          roundScore = 0;
+          roundScore = 0; // discard any score earned this turn
           updateScore();
 
           // change active player
@@ -91,24 +111,28 @@ document.querySelector(".btn-roll").addEventListener("click", function() {
 });
 
 document.querySelector(".btn-hold").addEventListener("click", function() {
-     // 1. Update player's score
-     scores[activePlayer] += roundScore;
-     roundScore = 0; // reset round score
+     // 1. if game ended, return
+     if (gameEnd) return;
+
+     // 2. Update player's score and UI
      updateScore();
 
-     // 2. change active player
-     changeActivePlayer();
+     // 3. Check if final score is defined
+     var finalScore = document.querySelector(".final-score").nodeValue;
+     if (finalScore) endCondition = finalScore;
+
+     // 4. if current player score < endCondition, switch to other
+     // player's turn, else anounce the winner and stop the game
+     if (scores[activePlayer] >= endCondition) {
+          gameEnd = true;
+          document.querySelector(".dice").style.display = "none";
+          document.querySelector(".player-" + activePlayer + "-panel").classList.add("winner");
+          document.querySelector(".player-" + activePlayer + "-panel").classList.remove("active");
+          document.querySelector("#name-" + activePlayer).textContent = "Winner";
+     } else changeActivePlayer();
 });
 
-document.querySelector(".btn-new").addEventListener("click", function() {
-     // 1. reset document content
-     initNewGame();
-
-     // 2. reset global variables
-     scores = [0, 0];
-     roundScore = 0;
-     activePlayer = 0;
-});
+document.querySelector(".btn-new").addEventListener("click", initNewGame);
 //
 // ───────────────────────────────────────────────────────────────── CALLBACK ─────
 //
